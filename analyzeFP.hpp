@@ -111,6 +111,8 @@ public:
 
 	virtual void sendMessage(string message);
 
+	void OnFunctionCall(int FunctionId, const char* ItemString, POINT Pt, RECT Area);
+
 	virtual void OnTimer(int Count);
 
 protected:

@@ -110,7 +110,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;EDFFCHECKFP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\Casa\Desktop\VFPC\Libs;C:\Users\Casa\Desktop\VFPC\Libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Libs;C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -129,7 +129,7 @@
       <PreprocessorDefinitions>_DEBUG;EDFFCHECKFP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\Casa\Desktop\VFPC\Libs;C:\Users\Casa\Desktop\VFPC\Libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Libs;C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,7 +150,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;EDFFCHECKFP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\Casa\Desktop\VFPC\Libs;C:\Users\Casa\Desktop\VFPC\Libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Libs;C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -173,7 +173,7 @@
       <PreprocessorDefinitions>NDEBUG;EDFFCHECKFP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\Casa\Desktop\VFPC\Libs;C:\Users\Casa\Desktop\VFPC\Libs\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Libs;C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

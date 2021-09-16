@@ -3,6 +3,7 @@
 
 const int TAG_ITEM_INITIALCLIMB = 1;
 
+const int TAG_FUNC_ADDTOCFL = 100;
 const int TAG_FUNC_ON_OFF = 102;
 
 const COLORREF TAG_GREEN = RGB(0, 190, 0);

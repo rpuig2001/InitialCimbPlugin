@@ -14,8 +14,6 @@ int disCount;
 ifstream sidDatei;
 char DllPathFile[_MAX_PATH];
 string pfad;
-string initialClimb;
-string customSid;
 
 vector<string> sidName;
 vector<string> sidEven;
@@ -37,6 +35,7 @@ InitialClimbPlugin::InitialClimbPlugin(void) :CPlugIn(EuroScopePlugIn::COMPATIBI
 
 	// Register Tag Item "Initial climb"
 	RegisterTagItemType("Initial Climb", TAG_ITEM_INITIALCLIMB);
+	RegisterTagItemFunction("Add to CFL", TAG_FUNC_ADDTOCFL);
 
 	// Get Path of the Sid.json
 	GetModuleFileNameA(HINSTANCE(&__ImageBase), DllPathFile, sizeof(DllPathFile));
@@ -74,6 +73,32 @@ void InitialClimbPlugin::sendMessage(string message) {
 	DisplayUserMessage("Message", "InitialCLimbPlugin", message.c_str(), true, true, true, false, false);
 }
 
+//
+void InitialClimbPlugin::OnFunctionCall(int FunctionId, const char* ItemString, POINT Pt, RECT Area) {
+	CFlightPlan fp = FlightPlanSelectASEL();
+
+	if (FunctionId == TAG_FUNC_ADDTOCFL) 
+	{
+		string fpType = fp.GetFlightPlanData().GetPlanType();
+		if (fpType != "V") {
+			string origin = fp.GetFlightPlanData().GetOrigin(); boost::to_upper(origin);
+			string depRwy = fp.GetFlightPlanData().GetDepartureRwy(); boost::to_upper(depRwy);
+			string sid = fp.GetFlightPlanData().GetSidName(); boost::to_upper(sid);
+
+			string txt = getInitialClimbFromFile(origin, depRwy, sid);
+			fp.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
+			//Add green color if pressed
+		}
+	}
+	if (FunctionId == TAG_FUNC_ON_OFF) {
+		if (find(AircraftIgnore.begin(), AircraftIgnore.end(), fp.GetCallsign()) != AircraftIgnore.end())
+			AircraftIgnore.erase(remove(AircraftIgnore.begin(), AircraftIgnore.end(), fp.GetCallsign()), AircraftIgnore.end());
+		else
+			AircraftIgnore.emplace_back(fp.GetCallsign());
+
+	}
+}
+
 // Get FlightPlan, and therefore get the first waypoint of the flightplan (ie. SID). Check if the (RFL/1000) corresponds to the SID Min FL and report output "OK" or "FPL"
 void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget, int ItemCode, int TagData, char sItemString[16], int* pColorCode, COLORREF* pRGB, double* pFontSize)
 {
@@ -94,7 +119,7 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 		boost::to_upper(sid_suffix);
 	}
 	//Get data from the xml function and if has value add it.
-	string txt = getInitialClimbFromFile(origin, depRwy, first_wp);
+	string txt = getInitialClimbFromFile(origin, depRwy, sid);
 	bool hasInitialClimbSet = false;
 	const char* initialAlt = "";
 
@@ -121,7 +146,7 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 		else {
 			if (hasInitialClimbSet)
 				{
-					*pRGB = TAG_GREEN;
+					*pRGB = TAG_RED;
 					strcpy_s(sItemString, 16, initialAlt);
 				}
 				else {
@@ -133,14 +158,14 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 }
 
 //Get all data from the xml file
-string InitialClimbPlugin::getInitialClimbFromFile(string origin, string depRwy, string first_wp)
+string InitialClimbPlugin::getInitialClimbFromFile(string origin, string depRwy, string sid)
 {
 	xml_document doc;
 
 	// load the XML file
 	doc.load_file(pfad.c_str());
 
-	string xpath = "/initialClimb/apt[@icao='" + origin + "']/runway[@name='" + depRwy + "']/sid[@name='" + first_wp + "']/alt";
+	string xpath = "/initialClimb/apt[@icao='" + origin + "']/runway[@name='" + depRwy + "']/sid[@name='" + sid + "']/alt";
 	pugi::xpath_node_set altPugi = doc.select_nodes(xpath.c_str());
 	
 	std::vector<std::string> result;
@@ -190,6 +215,6 @@ void InitialClimbPlugin::OnTimer(int Counter) {
 		sidMin.clear();
 		sidMax.clear();
 		initialSidLoad = false;
-		sendMessage("Unloading...", "All loaded, have fun!");
+		sendMessage("Unloading... ");
 	}
 }
