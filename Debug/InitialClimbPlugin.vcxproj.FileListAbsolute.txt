@@ -1,1 +1,1 @@
-C:\Users\Casa\source\repos\rpuig2001\InitialClimbPlugin\Debug\IntitialClimbPlugin.dll
+C:\Users\Casa\source\repos\rpuig2001\InitialClimbPlugin\Debug\InitialClimbPlugin.dll

@@ -39,9 +39,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{0ED612D6-C21A-4060-AF5A-F0BE2F35ADB7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>IntitialClimbPlugin</RootNamespace>
+    <RootNamespace>InitialClimbPlugin</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>IntitialClimbPlugin</ProjectName>
+    <ProjectName>InitialClimbPlugin</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
