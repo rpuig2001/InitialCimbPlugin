@@ -40,7 +40,7 @@ InitialClimbPlugin::InitialClimbPlugin(void) :CPlugIn(EuroScopePlugIn::COMPATIBI
 	// Get Path of the Sid.json
 	GetModuleFileNameA(HINSTANCE(&__ImageBase), DllPathFile, sizeof(DllPathFile));
 	pfad = DllPathFile;
-	pfad.resize(pfad.size() - (strlen("InitialClimbPlugin.dll")+1));
+	pfad.resize(pfad.size() - strlen("InitialClimbPlugin.dll"));
 	pfad += "initialClimb.xml";
 
 	debugMode = false;
