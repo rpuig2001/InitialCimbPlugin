@@ -13,7 +13,7 @@
 #include "rapidjson/stringbuffer.h"
 
 #define MY_PLUGIN_NAME      "Initial Climb"
-#define MY_PLUGIN_VERSION   "1.0"
+#define MY_PLUGIN_VERSION   "1.2.0"
 #define MY_PLUGIN_DEVELOPER "Roger Puig"
 #define MY_PLUGIN_COPYRIGHT "GPL v3"
 #define MY_PLUGIN_VIEW_AVISO  "Euroscope Intial climb"
