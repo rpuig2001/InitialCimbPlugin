@@ -86,8 +86,9 @@ void InitialClimbPlugin::OnFunctionCall(int FunctionId, const char* ItemString, 
 			string sid = fp.GetFlightPlanData().GetSidName(); boost::to_upper(sid);
 
 			string txt = getInitialClimbFromFile(origin, depRwy, sid);
-			fp.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
-			//Add green color if pressed
+			if (txt.length() > 0) {
+				fp.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
+			}
 		}
 	}
 	if (FunctionId == TAG_FUNC_ON_OFF) {
@@ -118,7 +119,7 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 		sid_suffix = sid.substr(sid.find_first_of("0123456789"), sid.length());
 		boost::to_upper(sid_suffix);
 	}
-	//Get data from the xml function and if has value add it.
+	//Get data from the xml function and if has value add it when checking the correct itemCode.
 	string txt = getInitialClimbFromFile(origin, depRwy, sid);
 	bool hasInitialClimbSet = false;
 	const char* initialAlt = "";
@@ -146,8 +147,16 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 		else {
 			if (hasInitialClimbSet)
 				{
+				if (FlightPlan.GetControllerAssignedData().GetClearedAltitude() == std::stoi(txt) * 100)
+				{
+					*pRGB = TAG_GREEN;
+					strcpy_s(sItemString, 16, initialAlt);
+				}
+				else {
 					*pRGB = TAG_RED;
 					strcpy_s(sItemString, 16, initialAlt);
+				}
+
 				}
 				else {
 					*pRGB = TAG_GREY;
