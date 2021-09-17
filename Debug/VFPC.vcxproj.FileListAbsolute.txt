@@ -1,4 +1,0 @@
-C:\Users\Casa\Desktop\VFPC\Debug\IntitialClimbPlugin.dll
-C:\Users\Casa\Source\Repos\rpuig2001\InitialCimbPlugin\Debug\IntitialClimbPlugin.dll.lastcodeanalysissucceeded
-C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Debug\NativeCodeAnalysis.read.1.tlog
-C:\Users\Casa\source\repos\rpuig2001\InitialCimbPlugin\Debug\IntitialClimbPlugin.dll
