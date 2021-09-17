@@ -85,9 +85,18 @@ void InitialClimbPlugin::OnFunctionCall(int FunctionId, const char* ItemString, 
 			string depRwy = fp.GetFlightPlanData().GetDepartureRwy(); boost::to_upper(depRwy);
 			string sid = fp.GetFlightPlanData().GetSidName(); boost::to_upper(sid);
 
-			string txt = getInitialClimbFromFile(origin, depRwy, sid);
-			if (txt.length() > 0) {
-				fp.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
+			string Sidtxt = getInitialClimbFromFile(origin, depRwy, sid);
+			if (Sidtxt.length() > 0) {
+				fp.GetControllerAssignedData().SetClearedAltitude(std::stoi(Sidtxt) * 100);
+			}
+			else {
+				string first_wp = sid.substr(0, sid.find_first_of("0123456789"));
+				if (0 != first_wp.length())
+					boost::to_upper(first_wp);
+				string FirstWptxt = getInitialClimbFromFile(origin, depRwy, first_wp);
+				if (FirstWptxt.length() > 0) {
+					fp.GetControllerAssignedData().SetClearedAltitude(std::stoi(FirstWptxt) * 100);
+				}
 			}
 		}
 	}
@@ -120,17 +129,25 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 		boost::to_upper(sid_suffix);
 	}
 	//Get data from the xml function and if has value add it when checking the correct itemCode.
-	string txt = getInitialClimbFromFile(origin, depRwy, sid);
+	string txt;
+	string Sidtxt = getInitialClimbFromFile(origin, depRwy, sid);
+	string FirstWptxt = getInitialClimbFromFile(origin, depRwy, first_wp);
 	bool hasInitialClimbSet = false;
 	const char* initialAlt = "";
 
-	if (txt.length() > 0) 
+	if (Sidtxt.length() > 0)
 	{
-		initialAlt = txt.c_str();
+		initialAlt = Sidtxt.c_str();
 		hasInitialClimbSet = true;
+		txt = Sidtxt;
+	}
+	else if (FirstWptxt.length() > 0) {
+			initialAlt = FirstWptxt.c_str();
+			hasInitialClimbSet = true;
+			txt = FirstWptxt;
 	}
 	else {
-		hasInitialClimbSet = false;
+			hasInitialClimbSet = false;
 	}
 
 	if (ItemCode == TAG_ITEM_INITIALCLIMB)
@@ -147,15 +164,15 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 		else {
 			if (hasInitialClimbSet)
 				{
-				if (FlightPlan.GetControllerAssignedData().GetClearedAltitude() == std::stoi(txt) * 100)
-				{
-					*pRGB = TAG_GREEN;
-					strcpy_s(sItemString, 16, initialAlt);
-				}
-				else {
-					*pRGB = TAG_RED;
-					strcpy_s(sItemString, 16, initialAlt);
-				}
+					if (FlightPlan.GetControllerAssignedData().GetClearedAltitude() == std::stoi(txt) * 100)
+					{
+						*pRGB = TAG_GREEN;
+						strcpy_s(sItemString, 16, initialAlt);
+					}
+					else {
+						*pRGB = TAG_RED;
+						strcpy_s(sItemString, 16, initialAlt);
+					}
 
 				}
 				else {
