@@ -70,7 +70,7 @@ void InitialClimbPlugin::sendMessage(string type, string message) {
 }
 
 void InitialClimbPlugin::sendMessage(string message) {
-	DisplayUserMessage("Message", "InitialCLimbPlugin", message.c_str(), true, true, true, false, false);
+	DisplayUserMessage("Message", "InitialClimbPlugin", message.c_str(), true, true, true, false, false);
 }
 
 //
