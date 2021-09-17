@@ -2,6 +2,7 @@
 InitialClimbPlugin is an Euroscope plugin that allows us to see the initial climb depending on the airport, runway and departure.
 
 
+
 ## How to use:
 - Load up the plugin.
 - Add Tag Item type & function to Departure List.
