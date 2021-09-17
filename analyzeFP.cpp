@@ -135,6 +135,7 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 	bool hasInitialClimbSet = false;
 	const char* initialAlt = "";
 
+	//Try to get value from Sidtxt or FirstWptxt.
 	if (Sidtxt.length() > 0)
 	{
 		initialAlt = Sidtxt.c_str();
