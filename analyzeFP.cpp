@@ -25,7 +25,7 @@ using namespace std;
 using namespace EuroScopePlugIn;
 using namespace pugi;
 
-	// Run on Plugin Initialization
+// Run on Plugin Initialization
 InitialClimbPlugin::InitialClimbPlugin(void) :CPlugIn(EuroScopePlugIn::COMPATIBILITY_CODE, MY_PLUGIN_NAME, MY_PLUGIN_VERSION, MY_PLUGIN_DEVELOPER, MY_PLUGIN_COPYRIGHT)
 {
 	string loadingMessage = "Version: ";
@@ -77,7 +77,7 @@ void InitialClimbPlugin::sendMessage(string message) {
 void InitialClimbPlugin::OnFunctionCall(int FunctionId, const char* ItemString, POINT Pt, RECT Area) {
 	CFlightPlan fp = FlightPlanSelectASEL();
 
-	if (FunctionId == TAG_FUNC_ADDTOCFL) 
+	if (FunctionId == TAG_FUNC_ADDTOCFL)
 	{
 		string fpType = fp.GetFlightPlanData().GetPlanType();
 		if (fpType != "V") {
@@ -233,7 +233,7 @@ string InitialClimbPlugin::getInitialClimbFromFile(string origin, string depRwy,
 
 	string xpath = "/initialClimb/apt[@icao='" + origin + "']/runway[@name='" + depRwy + "']/sid[@name='" + sid + "']/alt";
 	pugi::xpath_node_set altPugi = doc.select_nodes(xpath.c_str());
-	
+
 	std::vector<std::string> result;
 	for (auto xpath_node : altPugi) {
 		if (xpath_node.attribute() != nullptr)
