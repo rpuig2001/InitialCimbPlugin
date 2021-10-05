@@ -19,7 +19,7 @@ vector<string> sidName;
 vector<string> sidEven;
 vector<int> sidMin;
 vector<int> sidMax;
-vector<string> AircraftIgnore;
+vector<string> addedAircrafts;
 
 using namespace std;
 using namespace EuroScopePlugIn;
@@ -100,13 +100,6 @@ void InitialClimbPlugin::OnFunctionCall(int FunctionId, const char* ItemString, 
 			}
 		}
 	}
-	if (FunctionId == TAG_FUNC_ON_OFF) {
-		if (find(AircraftIgnore.begin(), AircraftIgnore.end(), fp.GetCallsign()) != AircraftIgnore.end())
-			AircraftIgnore.erase(remove(AircraftIgnore.begin(), AircraftIgnore.end(), fp.GetCallsign()), AircraftIgnore.end());
-		else
-			AircraftIgnore.emplace_back(fp.GetCallsign());
-
-	}
 }
 
 // Get FlightPlan, and therefore get the first waypoint of the flightplan (ie. SID). Check if the (RFL/1000) corresponds to the SID Min FL and report output "OK" or "FPL"
@@ -128,42 +121,70 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 		sid_suffix = sid.substr(sid.find_first_of("0123456789"), sid.length());
 		boost::to_upper(sid_suffix);
 	}
-	//Get data from the xml function and if has value add it when checking the correct itemCode.
-	string txt;
-	string Sidtxt = getInitialClimbFromFile(origin, depRwy, sid);
-	string FirstWptxt = getInitialClimbFromFile(origin, depRwy, first_wp);
-	bool hasInitialClimbSet = false;
-	const char* initialAlt = "";
 
-	//Try to get value from Sidtxt or FirstWptxt.
-	if (Sidtxt.length() > 0)
+	string listCallsign, listSid, listAlt;
+	bool hasInitialClimbSet = false;
+	bool aircraftFind = false;
+	for (int i = 0; i < addedAircrafts.size(); i++)
 	{
-		initialAlt = Sidtxt.c_str();
-		hasInitialClimbSet = true;
-		txt = Sidtxt;
+		listCallsign = addedAircrafts[i].substr(0, addedAircrafts[i].find(","));
+		if (listCallsign == callsign) {
+			listSid = addedAircrafts[i].substr(addedAircrafts[i].find(",") + 1, (addedAircrafts[i].length() - 5) - addedAircrafts[i].find(","));
+			listAlt = addedAircrafts[i].substr(addedAircrafts[i].length() - 3, 3);
+			if (listSid != first_wp) {
+				aircraftFind = false;
+				addedAircrafts.erase(addedAircrafts.begin() + i);
+			}
+			else {
+				aircraftFind = true;
+				hasInitialClimbSet = true;
+			}
+		}
 	}
-	else if (FirstWptxt.length() > 0) {
+
+	if (!aircraftFind) {
+
+		//Get data from the xml function and if has value add it when checking the correct itemCode.
+		string txt;
+		string Sidtxt = getInitialClimbFromFile(origin, depRwy, sid);
+		string FirstWptxt = getInitialClimbFromFile(origin, depRwy, first_wp);
+		const char* initialAlt = "";
+
+		//Try to get value from Sidtxt or FirstWptxt.
+		if (Sidtxt.length() > 0)
+		{
+			initialAlt = Sidtxt.c_str();
+			hasInitialClimbSet = true;
+			txt = Sidtxt;
+			FlightPlan.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
+			string valueToAdd = callsign + "," + first_wp + "," + txt;
+			addedAircrafts.push_back(valueToAdd);
+		}
+		else if (FirstWptxt.length() > 0) {
 			initialAlt = FirstWptxt.c_str();
 			hasInitialClimbSet = true;
 			txt = FirstWptxt;
-	}
-	else {
-			hasInitialClimbSet = false;
-	}
-
-	if (ItemCode == TAG_ITEM_INITIALCLIMB)
-	{
-		string FlightPlanString = FlightPlan.GetFlightPlanData().GetRoute();
-		int RFL = FlightPlan.GetFlightPlanData().GetFinalAltitude();
-
-		*pColorCode = TAG_COLOR_RGB_DEFINED;
-		string fpType{ FlightPlan.GetFlightPlanData().GetPlanType() };
-		if (fpType == "V") {
-			*pRGB = TAG_GREEN;
-			strcpy_s(sItemString, 16, "VFR");
+			FlightPlan.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
+			string valueToAdd = callsign + "," + first_wp + "," + txt;
+			addedAircrafts.push_back(valueToAdd);
 		}
 		else {
-			if (hasInitialClimbSet)
+			hasInitialClimbSet = false;
+		}
+
+		if (ItemCode == TAG_ITEM_INITIALCLIMB)
+		{
+			string FlightPlanString = FlightPlan.GetFlightPlanData().GetRoute();
+			int RFL = FlightPlan.GetFlightPlanData().GetFinalAltitude();
+
+			*pColorCode = TAG_COLOR_RGB_DEFINED;
+			string fpType{ FlightPlan.GetFlightPlanData().GetPlanType() };
+			if (fpType == "V") {
+				*pRGB = TAG_GREEN;
+				strcpy_s(sItemString, 16, "VFR");
+			}
+			else {
+				if (hasInitialClimbSet)
 				{
 					if (FlightPlan.GetControllerAssignedData().GetClearedAltitude() == std::stoi(txt) * 100)
 					{
@@ -180,7 +201,25 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 					*pRGB = TAG_GREY;
 					strcpy_s(sItemString, 16, "-");
 				}
+			}
 		}
+	}
+	else if (hasInitialClimbSet)
+	{
+		*pColorCode = TAG_COLOR_RGB_DEFINED;
+		if (FlightPlan.GetControllerAssignedData().GetClearedAltitude() == std::stoi(listAlt) * 100)
+		{
+			*pRGB = TAG_GREEN;
+			strcpy_s(sItemString, 16, listAlt.c_str());
+		}
+		else {
+			*pRGB = TAG_RED;
+			strcpy_s(sItemString, 16, listAlt.c_str());
+		}
+	}
+	else {
+		*pRGB = TAG_GREY;
+		strcpy_s(sItemString, 16, "-");
 	}
 }
 
@@ -215,7 +254,12 @@ string InitialClimbPlugin::getInitialClimbFromFile(string origin, string depRwy,
 //
 void InitialClimbPlugin::OnFlightPlanDisconnect(CFlightPlan FlightPlan)
 {
-	AircraftIgnore.erase(remove(AircraftIgnore.begin(), AircraftIgnore.end(), FlightPlan.GetCallsign()), AircraftIgnore.end());	
+	for (int i = 0; i < addedAircrafts.size(); i++)
+	{
+		if (addedAircrafts[i].substr(0, addedAircrafts[i].find(",")) == FlightPlan.GetCallsign()) {
+			addedAircrafts.erase(addedAircrafts.begin() + i);
+		}
+	}
 }
 
 void InitialClimbPlugin::OnTimer(int Counter) {
@@ -229,19 +273,5 @@ void InitialClimbPlugin::OnTimer(int Counter) {
 		else {
 			disCount = 0;
 		}
-	}
-
-	// Loading proper Sids, when logged in
-	if (GetConnectionType() != CONNECTION_TYPE_NO && !initialSidLoad) {
-		string callsign{ ControllerMyself().GetCallsign() };
-		initialSidLoad = true;
-	}
-	else if (GetConnectionType() == CONNECTION_TYPE_NO && initialSidLoad) {
-		sidName.clear();
-		sidEven.clear();
-		sidMin.clear();
-		sidMax.clear();
-		initialSidLoad = false;
-		sendMessage("Unloading... ");
 	}
 }
