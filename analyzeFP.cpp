@@ -131,7 +131,7 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 		if (listCallsign == callsign) {
 			listSid = addedAircrafts[i].substr(addedAircrafts[i].find(",") + 1, (addedAircrafts[i].length() - 5) - addedAircrafts[i].find(","));
 			listAlt = addedAircrafts[i].substr(addedAircrafts[i].length() - 3, 3);
-			if (listSid != first_wp) {
+			if (listSid != sid) {
 				aircraftFind = false;
 				addedAircrafts.erase(addedAircrafts.begin() + i);
 			}
@@ -157,7 +157,7 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 			hasInitialClimbSet = true;
 			txt = Sidtxt;
 			FlightPlan.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
-			string valueToAdd = callsign + "," + first_wp + "," + txt;
+			string valueToAdd = callsign + "," + sid + "," + txt;
 			addedAircrafts.push_back(valueToAdd);
 		}
 		else if (FirstWptxt.length() > 0) {
@@ -165,7 +165,7 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 			hasInitialClimbSet = true;
 			txt = FirstWptxt;
 			FlightPlan.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
-			string valueToAdd = callsign + "," + first_wp + "," + txt;
+			string valueToAdd = callsign + "," + sid + "," + txt;
 			addedAircrafts.push_back(valueToAdd);
 		}
 		else {
