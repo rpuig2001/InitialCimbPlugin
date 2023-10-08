@@ -13,7 +13,7 @@
 #include "rapidjson/stringbuffer.h"
 
 #define MY_PLUGIN_NAME      "Initial Climb"
-#define MY_PLUGIN_VERSION   "1.5.0"
+#define MY_PLUGIN_VERSION   "1.6.0"
 #define MY_PLUGIN_DEVELOPER "Roger Puig"
 #define MY_PLUGIN_COPYRIGHT "GPL v3"
 #define MY_PLUGIN_VIEW_AVISO  "Euroscope Intial climb"
@@ -113,7 +113,7 @@ public:
 
 	void OnFunctionCall(int FunctionId, const char* ItemString, POINT Pt, RECT Area);
 
-	void OnRefreshFpListContent(CFlightPlan FlightPlan);
+	void OnRadarTargetPositionUpdate(CRadarTarget RadarTarget);
 
 	virtual void OnTimer(int Count);
 

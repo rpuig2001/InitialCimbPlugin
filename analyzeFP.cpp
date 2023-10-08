@@ -102,8 +102,9 @@ void InitialClimbPlugin::OnFunctionCall(int FunctionId, const char* ItemString, 
 	}
 }
 
-void InitialClimbPlugin::OnRefreshFpListContent(CFlightPlan FlightPlan)
+void InitialClimbPlugin::OnRadarTargetPositionUpdate(CRadarTarget RadarTarget)
 {
+	CFlightPlan FlightPlan = FlightPlanSelect(RadarTarget.GetCallsign());
 	string callsign = FlightPlan.GetCallsign();
 	string sid = FlightPlan.GetFlightPlanData().GetSidName(); boost::to_upper(sid);
 	string listCallsign, listSid, listAlt;
