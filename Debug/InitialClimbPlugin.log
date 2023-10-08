@@ -1,4 +1,5 @@
-﻿  InitialClimbPlugin.cpp
-  analyzeFP.cpp
-  Generating Code...
-  InitialClimbPlugin.vcxproj -> C:\Users\Casa\source\repos\rpuig2001\InitialClimbPlugin\Debug\InitialClimbPlugin.dll
+﻿  analyzeFP.cpp
+C:\Users\Casa\Documents\GitHub\InitialCimbPlugin\analyzeFP.cpp(113,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Casa\Documents\GitHub\InitialCimbPlugin\analyzeFP.cpp(183,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Casa\Documents\GitHub\InitialCimbPlugin\analyzeFP.cpp(324,20): warning C4018: '<': signed/unsigned mismatch
+  InitialClimbPlugin.vcxproj -> C:\Users\Casa\Documents\GitHub\InitialCimbPlugin\Debug\InitialClimbPlugin.dll

@@ -102,29 +102,14 @@ void InitialClimbPlugin::OnFunctionCall(int FunctionId, const char* ItemString, 
 	}
 }
 
-// Get FlightPlan, and therefore get the first waypoint of the flightplan (ie. SID). Check if the (RFL/1000) corresponds to the SID Min FL and report output "OK" or "FPL"
-void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget, int ItemCode, int TagData, char sItemString[16], int* pColorCode, COLORREF* pRGB, double* pFontSize)
+void InitialClimbPlugin::OnRefreshFpListContent(CFlightPlan FlightPlan)
 {
 	string callsign = FlightPlan.GetCallsign();
-
-	string origin = FlightPlan.GetFlightPlanData().GetOrigin(); boost::to_upper(origin);
-	string destination = FlightPlan.GetFlightPlanData().GetDestination(); boost::to_upper(destination);
-
 	string sid = FlightPlan.GetFlightPlanData().GetSidName(); boost::to_upper(sid);
-	string depRwy = FlightPlan.GetFlightPlanData().GetDepartureRwy(); boost::to_upper(depRwy);
-
-	string first_wp = sid.substr(0, sid.find_first_of("0123456789"));
-	if (0 != first_wp.length())
-		boost::to_upper(first_wp);
-	string sid_suffix;
-	if (first_wp.length() != sid.length()) {
-		sid_suffix = sid.substr(sid.find_first_of("0123456789"), sid.length());
-		boost::to_upper(sid_suffix);
-	}
-
 	string listCallsign, listSid, listAlt;
 	bool hasInitialClimbSet = false;
 	bool aircraftFind = false;
+
 	for (int i = 0; i < addedAircrafts.size(); i++)
 	{
 		listCallsign = addedAircrafts[i].substr(0, addedAircrafts[i].find(","));
@@ -143,6 +128,88 @@ void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget Radar
 	}
 
 	if (!aircraftFind) {
+
+		string origin = FlightPlan.GetFlightPlanData().GetOrigin(); boost::to_upper(origin);
+		string destination = FlightPlan.GetFlightPlanData().GetDestination(); boost::to_upper(destination);
+		string depRwy = FlightPlan.GetFlightPlanData().GetDepartureRwy(); boost::to_upper(depRwy);
+		string first_wp = sid.substr(0, sid.find_first_of("0123456789"));
+		if (0 != first_wp.length())
+			boost::to_upper(first_wp);
+		string sid_suffix;
+		if (first_wp.length() != sid.length()) {
+			sid_suffix = sid.substr(sid.find_first_of("0123456789"), sid.length());
+			boost::to_upper(sid_suffix);
+		}
+
+		//Get data from the xml function and if has value add it when checking the correct itemCode.
+		string txt;
+		string Sidtxt = getInitialClimbFromFile(origin, depRwy, sid);
+		string FirstWptxt = getInitialClimbFromFile(origin, depRwy, first_wp);
+		const char* initialAlt = "";
+
+		//Try to get value from Sidtxt or FirstWptxt.
+		if (Sidtxt.length() > 0)
+		{
+			initialAlt = Sidtxt.c_str();
+			hasInitialClimbSet = true;
+			txt = Sidtxt;
+			FlightPlan.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
+			string valueToAdd = callsign + "," + sid + "," + txt;
+			addedAircrafts.push_back(valueToAdd);
+		}
+		else if (FirstWptxt.length() > 0) {
+			initialAlt = FirstWptxt.c_str();
+			hasInitialClimbSet = true;
+			txt = FirstWptxt;
+			FlightPlan.GetControllerAssignedData().SetClearedAltitude(std::stoi(txt) * 100);
+			string valueToAdd = callsign + "," + sid + "," + txt;
+			addedAircrafts.push_back(valueToAdd);
+		}
+		else {
+			hasInitialClimbSet = false;
+		}
+	}
+}
+
+// Get FlightPlan, and therefore get the first waypoint of the flightplan (ie. SID). Check if the (RFL/1000) corresponds to the SID Min FL and report output "OK" or "FPL"
+void InitialClimbPlugin::OnGetTagItem(CFlightPlan FlightPlan, CRadarTarget RadarTarget, int ItemCode, int TagData, char sItemString[16], int* pColorCode, COLORREF* pRGB, double* pFontSize)
+{
+	string callsign = FlightPlan.GetCallsign();
+	string sid = FlightPlan.GetFlightPlanData().GetSidName(); boost::to_upper(sid);
+	string listCallsign, listSid, listAlt;
+	bool hasInitialClimbSet = false;
+	bool aircraftFind = false;
+
+	for (int i = 0; i < addedAircrafts.size(); i++)
+	{
+		listCallsign = addedAircrafts[i].substr(0, addedAircrafts[i].find(","));
+		if (listCallsign == callsign) {
+			listSid = addedAircrafts[i].substr(addedAircrafts[i].find(",") + 1, (addedAircrafts[i].length() - 5) - addedAircrafts[i].find(","));
+			listAlt = addedAircrafts[i].substr(addedAircrafts[i].length() - 3, 3);
+			if (listSid != sid) {
+				aircraftFind = false;
+				addedAircrafts.erase(addedAircrafts.begin() + i);
+			}
+			else {
+				aircraftFind = true;
+				hasInitialClimbSet = true;
+			}
+		}
+	}
+
+	if (!aircraftFind) {
+
+		string origin = FlightPlan.GetFlightPlanData().GetOrigin(); boost::to_upper(origin);
+		string destination = FlightPlan.GetFlightPlanData().GetDestination(); boost::to_upper(destination);
+		string depRwy = FlightPlan.GetFlightPlanData().GetDepartureRwy(); boost::to_upper(depRwy);
+		string first_wp = sid.substr(0, sid.find_first_of("0123456789"));
+		if (0 != first_wp.length())
+			boost::to_upper(first_wp);
+		string sid_suffix;
+		if (first_wp.length() != sid.length()) {
+			sid_suffix = sid.substr(sid.find_first_of("0123456789"), sid.length());
+			boost::to_upper(sid_suffix);
+		}
 
 		//Get data from the xml function and if has value add it when checking the correct itemCode.
 		string txt;

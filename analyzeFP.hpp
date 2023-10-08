@@ -113,6 +113,8 @@ public:
 
 	void OnFunctionCall(int FunctionId, const char* ItemString, POINT Pt, RECT Area);
 
+	void OnRefreshFpListContent(CFlightPlan FlightPlan);
+
 	virtual void OnTimer(int Count);
 
 protected:
