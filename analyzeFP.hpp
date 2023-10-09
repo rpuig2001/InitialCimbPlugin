@@ -113,7 +113,7 @@ public:
 
 	void OnFunctionCall(int FunctionId, const char* ItemString, POINT Pt, RECT Area);
 
-	void OnRadarTargetPositionUpdate(CRadarTarget RadarTarget);
+	void OnFlightPlanFlightPlanDataUpdate(CFlightPlan FlightPlan);
 
 	virtual void OnTimer(int Count);
 
